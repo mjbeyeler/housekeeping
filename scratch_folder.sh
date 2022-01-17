@@ -29,4 +29,4 @@ OUTPUT_DIR=$SCRATCH_DIR$OUTPUT_PARENT_DIR$TARGET_DIR
 mkdir -p $SCRATCH_DIR$OUTPUT_PARENT_DIR
 # creating scratch copy
 
-rsync -a $INPUT_DIR $OUTPUT_DIR
+rsync -ah --info=progress2 $INPUT_DIR $OUTPUT_DIR

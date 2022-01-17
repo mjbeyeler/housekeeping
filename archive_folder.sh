@@ -35,10 +35,10 @@ mkdir -p $ARCHIVE_DIR$OUTPUT_PARENT_DIR
 
 if [[ "$DELETE" = delete ]]; then
 	echo rsync and deleting source
-	rsync --remove-source-files -a $INPUT_DIR $OUTPUT_DIR && rm -rf $INPUT_DIR
+	rsync --remove-source-files -ah --info=progress2 $INPUT_DIR $OUTPUT_DIR && rm -rf $INPUT_DIR
 elif [[ "$DELETE" = keep ]]; then
 	echo rsync and keeping source
-	rsync -a $INPUT_DIR $OUTPUT_DIR
+	rsync -ah --info=progress2 $INPUT_DIR $OUTPUT_DIR
 else
 	echo Please specify whether to \"keep\" or \"delete\" source.
 fi
