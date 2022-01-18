@@ -1,34 +1,32 @@
 #!/bin/bash
 
-# WHAT IT DOES
-# gzips any folder of choice, moves it to the Jura archive, and then deletes the source folder
+# Summary
+# This scipt copies/moves a folder and all its content to the backed-up archive as a gzip archive.
 
-# HOW-TO
-# cd to parent of folder to archive, then type following command:
-# (copy script to home directory for easy use)
-# $HOME/archive_folder.sh $(pwd -P) *experiment_id*
+# How-to
+# 1) Navigate to parent of folder of interest
+# 2) ~/housekeeping/zarchive_folder.sh folder_of_interest keep/delete
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source $SCRIPT_DIR/config.sh
 
-INPUT_PARENT_DIR=$1
-INPUT_DIR=$2
-KEEP_SRC=$3
+INPUT_PARENT_DIR=$(pwd -P)
+TARGET_DIR=$(sed "s|\/||g"<<<"$1")
+DELETE=$2
 
-OUTPUT_PARENT_DIR=$(sed "s/.*sbergman\///g" <<<"$INPUT_PARENT_DIR")
-#PARENT_DIR=$(echo $OUT_DIR | sed 's|\(.*\)/.*|\1|')
+OUTPUT_PARENT_DIR=$ARCHIVE_DIR/$(sed "s|$SCRATCH_DIR||g"<<<"$INPUT_PARENT_DIR")
 
+INPUT_DIR=$INPUT_PARENT_DIR/$TARGET_DIR
+OUTPUT_DIR=$OUTPUT_PARENT_DIR/$TARGET_DIR
 
-# making sure parent folders exist, else create them
-mkdir -p $ARCHIVE_DIR$OUTPUT_PARENT_DIR
-# creating archive
+mkdir -p $OUTPUT_PARENT_DIR
 
-cd $INPUT_PARENT_DIR
-if [[ "$KEEP_SRC" = "TRUE" ]]
-then
-	echo keeping source: TRUE
-	tar czf $ARCHIVE_DIR$OUTPUT_PARENT_DIR/$INPUT_DIR.tgz $INPUT_DIR
+if [[ "$DELETE" = delete ]]; then
+	echo gzipping, archiving, and deleting source
+        tar czf $OUTPUT_DIR.tgz $TARGET_DIR && rm -rf $TARGET_DIR
+elif [[ "$DELETE" = keep ]]; then
+        echo gzipping and archiving, keeping source
+	tar czf $OUTPUT_DIR.tgz $TARGET_DIR
 else
-	echo keeping source: FALSE
-	tar czf $ARCHIVE_DIR$OUTPUT_PARENT_DIR/$INPUT_DIR.tgz $INPUT_DIR && rm -rf $INPUT_DIR
+	echo Please specify whether to \"keep\" or \"delete\" source.
 fi

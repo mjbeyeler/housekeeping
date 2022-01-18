@@ -1,24 +1,20 @@
 #!/bin/bash
 
-# WHAT IT DOES
-# copies gziped folder content, to corresponding location in scratch
+# Summary
+# This scipt copies a folder and all its content to scratch space.
 
-# HOW-TO
-# ~/zscratch_folder.sh $(pwd -P) archived_folder
+# How-to
+# 1) Navigate to parent of folder of interest
+# 2) ~/housekeeping/scratch_folder.sh folder_of_interest
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source $SCRIPT_DIR/config.sh
 
-INPUT_PARENT_DIR=$1
-INPUT_ZDIR=$2
+INPUT_PARENT_DIR=$(pwd -P)
+TARGET_ZDIR=$1
 
-OUTPUT_PARENT_DIR=$(sed "s/.*sbergman\///g" <<<"$INPUT_PARENT_DIR")
-#PARENT_DIR=$(echo $OUT_DIR | sed 's|\(.*\)/.*|\1|')
+OUTPUT_PARENT_DIR=$SCRATCH_DIR/$(sed "s|$ARCHIVE_DIR||g"<<<"$INPUT_PARENT_DIR")
 
-echo $SCRATCH_DIR$OUTPUT_PARENT_DIR
-echo $INPUT_ZDIR
+mkdir -p $OUTPUT_PARENT_DIR
 
-# making sure parent folders exist, else create them
-mkdir -p $SCRATCH_DIR$OUTPUT_PARENT_DIR
-
-tar xzf $INPUT_ZDIR -C $SCRATCH_DIR$OUTPUT_PARENT_DIR/
+tar xzf $INPUT_PARENT_DIR/$TARGET_ZDIR -C $OUTPUT_PARENT_DIR
